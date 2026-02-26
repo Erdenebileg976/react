@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import Movie from "../models/Movie";
+import { Comments } from "../models/Comment";
+import { generateKey } from "node:crypto";
 
 export const getMovies = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -22,9 +24,9 @@ export const getMovies = async (req: Request, res: Response): Promise<void> => {
         .skip(skip)
         .limit(limit)
         .select(
-          "title year runtime genres directors cast plot poster rated imdb awards type"
+          "title year runtime genres directors cast plot poster rated imdb awards type",
         ),
-      Movie.countDocuments(filter)
+      Movie.countDocuments(filter),
     ]);
 
     res.json({
@@ -32,7 +34,7 @@ export const getMovies = async (req: Request, res: Response): Promise<void> => {
       limit,
       total,
       totalPages: Math.ceil(total / limit),
-      movies
+      movies,
     });
   } catch (err) {
     console.error(err);
@@ -42,7 +44,7 @@ export const getMovies = async (req: Request, res: Response): Promise<void> => {
 
 export const getMovieById = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const movie = await Movie.findById(req.params.id);
@@ -56,5 +58,32 @@ export const getMovieById = async (
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const getMovieGenre = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const movies = await Movie.distinct("genres");
+
+    res.json(movies);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "error" });
+  }
+};
+
+export const getMovieComment = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.query;
+
+    if (!id) {
+    }
+    const comments = await Comments.find({ movieId: id });
+    res.status(200).json(comments);
+  } catch (err) {
+    console.error("aldaaaaaaaaaa");
   }
 };

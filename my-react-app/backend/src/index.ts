@@ -3,9 +3,9 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import moviesRouter from "./routes/movies";
-
+import commentsRouter from "./routes/comments";
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 const MONGODB_URI =
   process.env.MONGODB_URI ||
   "mongodb+srv://erdenebilegsurnee_db_user:j4kRPYrxUDXzP4Dg@backend.4nym1fn.mongodb.net/sample_mflix";
@@ -14,6 +14,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/movies", moviesRouter);
+
+app.use("/api/comments", commentsRouter);
 
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
