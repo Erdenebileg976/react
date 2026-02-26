@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Movie from "../models/Movie";
 import { Comments } from "../models/Comment";
 import { generateKey } from "node:crypto";
+const mongoose = require("mongoose");
 
 export const getMovies = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -78,10 +79,9 @@ export const getMovieGenre = async (
 export const getMovieComment = async (req: Request, res: Response) => {
   try {
     const { id } = req.query;
-
-    if (!id) {
-    }
-    const comments = await Comments.find({ movieId: id });
+    const comments = await Comments.find({
+      movie_id: new mongoose.Types.ObjectId(id),
+    });
     res.status(200).json(comments);
   } catch (err) {
     console.error("aldaaaaaaaaaa");

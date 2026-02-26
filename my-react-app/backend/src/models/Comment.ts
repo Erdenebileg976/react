@@ -5,9 +5,7 @@ export interface ICommentsDocument extends Document {
   email: string;
   text: string;
   date: string[];
-  movie_id: {
-    $oid: [];
-  };
+  movie_id: string;
 }
 
 const CommentSchema: Schema<ICommentsDocument> = new Schema({
