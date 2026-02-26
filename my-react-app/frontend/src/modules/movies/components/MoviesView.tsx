@@ -7,25 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { MovieCard } from "./MovieCard";
 import { MovieCardSkeleton } from "./MovieCardSkeleton";
-
-const GENRES = [
-  "Action",
-  "Comedy",
-  "Drama",
-  "Horror",
-  "Romance",
-  "Thriller",
-  "Animation",
-  "Documentary",
-  "Crime",
-  "Sci-Fi"
-];
-
+import { useGetGenres } from "../hooks/useGenre";
 const MoviesView = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchInput, setSearchInput] = useState(
-    searchParams.get("search") ?? ""
+    searchParams.get("search") ?? "",
   );
 
   const page = Number(searchParams.get("page") ?? "1");
@@ -36,8 +23,12 @@ const MoviesView = () => {
     page,
     limit: 20,
     search: search || undefined,
-    genre: selectedGenre || undefined
+    genre: selectedGenre || undefined,
   });
+  const { data: genres = [], isLoading: loadingGenre } = useGetGenres();
+  if (loadingGenre) {
+    <div>loading</div>;
+  }
 
   const movies = data?.movies ?? [];
   const totalPages = data?.totalPages ?? 1;
@@ -52,7 +43,7 @@ const MoviesView = () => {
     const newGenre = selectedGenre === genre ? "" : genre;
     setSearchParams({ search, genre: newGenre, page: "1" });
   };
-
+  console.log(genres, "fdfdfd");
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b">
@@ -68,7 +59,7 @@ const MoviesView = () => {
                 type="text"
                 placeholder="Search movies..."
                 value={searchInput}
-                onChange={e => setSearchInput(e.target.value)}
+                onChange={(e) => setSearchInput(e.target.value)}
                 className="pl-9"
               />
             </div>
@@ -92,7 +83,7 @@ const MoviesView = () => {
           >
             All
           </Button>
-          {GENRES.map(genre => (
+          {genres.map((genre) => (
             <Button
               key={genre}
               variant={selectedGenre === genre ? "default" : "outline"}
@@ -147,7 +138,7 @@ const MoviesView = () => {
             ? Array.from({ length: 20 }).map((_, i) => (
                 <MovieCardSkeleton key={i} />
               ))
-            : movies.map(movie => (
+            : movies.map((movie) => (
                 <MovieCard
                   key={movie._id}
                   movie={movie}
@@ -174,7 +165,7 @@ const MoviesView = () => {
                 setSearchParams({
                   search,
                   genre: selectedGenre,
-                  page: String(page - 1)
+                  page: String(page - 1),
                 })
               }
               disabled={page === 1}
@@ -191,7 +182,7 @@ const MoviesView = () => {
                 setSearchParams({
                   search,
                   genre: selectedGenre,
-                  page: String(page + 1)
+                  page: String(page + 1),
                 })
               }
               disabled={page === totalPages}
